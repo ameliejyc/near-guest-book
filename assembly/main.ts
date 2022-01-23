@@ -1,6 +1,5 @@
-import { PostedMessage, messages } from './model';
-
-// --- contract code goes below
+import { Context } from "near-sdk-as";
+import { PostedMessage, messages } from "./model";
 
 // The maximum number of latest messages the contract returns.
 const MESSAGE_LIMIT = 10;
@@ -25,8 +24,25 @@ export function getMessages(): PostedMessage[] {
   const numMessages = min(MESSAGE_LIMIT, messages.length);
   const startIndex = messages.length - numMessages;
   const result = new Array<PostedMessage>(numMessages);
-  for(let i = 0; i < numMessages; i++) {
+  for (let i = 0; i < numMessages; i++) {
     result[i] = messages[i + startIndex];
   }
   return result;
+}
+
+/**
+ * Adds a reply to a message from the contract owner.\
+ * NOTE: This is a change method. Which means it will modify the state.\
+ */
+export function addReply(text: string, messageIndex: i32): void {
+  const caller = Context.predecessor;
+  const owner = Context.contractName;
+  assert(
+    owner == caller,
+    "Only the owner of this contract may call this method"
+  );
+  const messageToReplyTo: PostedMessage = messages[messageIndex];
+  assert(!messageToReplyTo.reply, "This message already has one reply");
+  messageToReplyTo.addReply(text);
+  messages.replace(messageIndex, messageToReplyTo);
 }

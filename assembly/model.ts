@@ -1,17 +1,26 @@
 import { context, u128, PersistentVector } from "near-sdk-as";
+// import { Timestamp } from "./utils";
 
-/** 
+/**
  * Exporting a new class PostedMessage so it can be used outside of this file.
  */
 @nearBindgen
 export class PostedMessage {
   premium: boolean;
   sender: string;
+  reply: string;
   constructor(public text: string) {
-    this.premium = context.attachedDeposit >= u128.from('10000000000000000000000');
+    this.premium =
+      context.attachedDeposit >= u128.from("10000000000000000000000");
     this.sender = context.sender;
+    this.reply = "";
+  }
+
+  addReply(text: string): void {
+    this.reply = text;
   }
 }
+
 /**
  * collections.vector is a persistent collection. Any changes to it will
  * be automatically saved in the storage.

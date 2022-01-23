@@ -1,21 +1,18 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React from "react";
+import PropTypes from "prop-types";
+import MessageCard from "./MessageCard";
 
-export default function Messages({ messages }) {
+export default function Messages({ messages, contract }) {
   return (
     <>
       <h2>Messages</h2>
-      {messages.map((message, i) =>
-        // TODO: format as cards, add timestamp
-        <p key={i} className={message.premium ? 'is-premium' : ''}>
-          <strong>{message.sender}</strong>:<br/>
-          {message.text}
-        </p>
-      )}
+      {messages.map((message, i) => (
+        <MessageCard index={i} message={message} contract={contract} />
+      ))}
     </>
   );
 }
 
 Messages.propTypes = {
-  messages: PropTypes.array
+  messages: PropTypes.array,
 };
