@@ -1,5 +1,4 @@
 import { context, u128, PersistentVector } from "near-sdk-as";
-// import { Timestamp } from "./utils";
 
 /**
  * Exporting a new class PostedMessage so it can be used outside of this file.
@@ -9,7 +8,7 @@ export class PostedMessage {
   premium: boolean;
   sender: string;
   reply: string;
-  constructor(public text: string) {
+  constructor(public text: string, public timestamp: i32) {
     this.premium =
       context.attachedDeposit >= u128.from("10000000000000000000000");
     this.sender = context.sender;

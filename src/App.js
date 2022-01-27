@@ -11,7 +11,7 @@ export const BOATLOAD_OF_GAS = Big(3)
   .times(10 ** 13)
   .toFixed();
 
-export const DONATION_VALUE = Big("0")
+export const DONATION_VALUE = Big(SUGGESTED_DONATION)
   .times(10 ** 24)
   .toFixed();
 
@@ -35,9 +35,9 @@ const App = ({ contract, currentUser, nearConfig, wallet }) => {
     // add uuid to each message, so we know which one is already known
     contract
       .addMessage(
-        { text: message.value },
+        { text: message.value, timestamp: Date.now() },
         BOATLOAD_OF_GAS,
-        Big(donation.value || "0")
+        Big(donation.value || SUGGESTED_DONATION)
           .times(10 ** 24)
           .toFixed()
       )
@@ -56,7 +56,11 @@ const App = ({ contract, currentUser, nearConfig, wallet }) => {
     wallet.requestSignIn(
       {
         contractId: nearConfig.contractName,
-        methodNames: [contract.addMessage.name],
+        methodNames: [
+          contract.addMessage.name,
+          contract.addReply.name,
+          contract.deleteMessage.name,
+        ],
       }, //contract requesting access
       "NEAR Guest Book", //optional name
       null, //optional URL to redirect to if the sign in was successful

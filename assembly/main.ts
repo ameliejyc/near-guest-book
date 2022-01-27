@@ -5,13 +5,13 @@ import { PostedMessage, messages } from "./model";
 const MESSAGE_LIMIT = 10;
 
 /**
- * Adds a new message under the name of the sender's account id.\
+ * Adds a new message with timestamp under the name of the sender's account id.\
  * NOTE: This is a change method. Which means it will modify the state.\
  * But right now we don't distinguish them with annotations yet.
  */
-export function addMessage(text: string): void {
+export function addMessage(text: string, timestamp: i32): void {
   // Creating a new message and populating fields with our data
-  const message = new PostedMessage(text);
+  const message = new PostedMessage(text, timestamp);
   // Adding the message to end of the persistent collection
   messages.push(message);
 }
@@ -42,7 +42,25 @@ export function addReply(text: string, messageIndex: i32): void {
     "Only the owner of this contract may call this method"
   );
   const messageToReplyTo: PostedMessage = messages[messageIndex];
+  assert(messageToReplyTo, "This message doesn't exist!");
   assert(!messageToReplyTo.reply, "This message already has one reply");
   messageToReplyTo.addReply(text);
   messages.replace(messageIndex, messageToReplyTo);
+}
+
+/**
+ * Deletes a message at the specified index.\
+ * A message can only be deleted by its owner.\
+ * NOTE: This is a change method. Which means it will modify the state.\
+ */
+
+export function deleteMessage(messageIndex: i32): void {
+  const messageToDelete: PostedMessage = messages[messageIndex];
+  assert(messageToDelete, "This message doesn't exist!");
+  const caller = Context.predecessor;
+  assert(
+    messageToDelete.sender == caller,
+    "Only the sender of this message may call this method"
+  );
+  messages.swap_remove(messageIndex);
 }

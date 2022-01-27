@@ -1,32 +1,43 @@
 import React, { useState } from "react";
-import { BOATLOAD_OF_GAS, DONATION_VALUE } from "../App";
 
 const MessageCard = ({ index, message, contract }) => {
   const [activeMessageIndex, setActiveMessageIndex] = useState(undefined);
+  const [replyErrorMessage, setReplyErrorMessage] = useState("");
+  const [deleteErrorMessage, setDeleteErrorMessage] = useState("");
 
-  const submitReply = (text) => {
+  const submitReply = async (text) => {
     if (text.length < 1) return;
-    contract
-      .addReply(
-        { text, messageIndex: activeMessageIndex },
-        BOATLOAD_OF_GAS,
-        DONATION_VALUE
-      )
-      .then(() => {
-        contract.getMessages().then(() => {
-          setActiveMessageIndex(undefined);
-        });
-      });
+    try {
+      await contract.addReply({ text, messageIndex: activeMessageIndex });
+      window.location.reload();
+    } catch {
+      setReplyErrorMessage(
+        "Sorry, only the contract owner can reply to messages."
+      );
+    }
+  };
+
+  const deleteMessage = async (messageIndex) => {
+    try {
+      await contract.deleteMessage({ messageIndex });
+      window.location.reload();
+    } catch {
+      setDeleteErrorMessage(
+        "Sorry, only the message author can delete this message."
+      );
+    }
   };
 
   return (
-    <div className="message-container">
-      <p className={message.premium ? "is-premium" : ""}>
-        <strong>Message from: {message.sender}</strong>:<br />
-        {`"${message.text}"`}
+    <div className={`message-container ${message.premium ? "is-premium" : ""}`}>
+      <p style={{ marginBottom: "0" }}>From: {message.sender}</p>
+      <p style={{ marginTop: "0", marginBottom: "0" }}>
+        Date: {Date(message.timestamp).toString()}
       </p>
-      {/* TODO: implement timestamp */}
-      <div className="message-reply">
+      <p>
+        <strong>{message.text}</strong>
+      </p>
+      <div className="message-actions">
         {message.reply ? (
           <Reply text={message.reply} />
         ) : (
@@ -35,16 +46,28 @@ const MessageCard = ({ index, message, contract }) => {
               setActiveMessageIndex(activeMessageIndex > -1 ? undefined : index)
             }
           >
-            {activeMessageIndex > -1 ? "Close" : "Reply to this message?"}
+            {activeMessageIndex > -1 ? "Close" : "Reply to this message"}
           </button>
         )}
-        {activeMessageIndex > -1 ? <Input submitReply={submitReply} /> : null}
+        {activeMessageIndex > -1 ? (
+          <Input
+            submitReply={submitReply}
+            replyErrorMessage={replyErrorMessage}
+          />
+        ) : null}
+        <button
+          style={{ marginTop: "10px" }}
+          onClick={() => deleteMessage(index)}
+        >
+          Delete this message
+        </button>
+        {deleteErrorMessage.length > 0 && <p>{deleteErrorMessage}</p>}
       </div>
     </div>
   );
 };
 
-const Input = ({ submitReply }) => {
+const Input = ({ submitReply, replyErrorMessage }) => {
   const [value, setValue] = useState("");
   const onChange = (event) => {
     setValue(event.target.value);
@@ -61,9 +84,13 @@ const Input = ({ submitReply }) => {
           onChange={onChange}
         />
       </p>
-      <button style={{ marginTop: "10px" }} onClick={() => submitReply(value)}>
+      <button
+        style={{ marginTop: "10px" }}
+        onClick={(e) => submitReply(e, value)}
+      >
         Submit reply
       </button>
+      {replyErrorMessage.length > 0 && <p>{replyErrorMessage}</p>}
     </>
   );
 };
