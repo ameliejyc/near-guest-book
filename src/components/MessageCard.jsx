@@ -34,6 +34,9 @@ const MessageCard = ({ index, message, contract }) => {
       <p style={{ marginTop: "0", marginBottom: "0" }}>
         Date: {Date(message.timestamp).toString()}
       </p>
+      {message.premium && (
+        <p style={{ marginTop: "0", marginBottom: "0" }}>Added donation!</p>
+      )}
       <p>
         <strong>{message.text}</strong>
       </p>
@@ -84,10 +87,7 @@ const Input = ({ submitReply, replyErrorMessage }) => {
           onChange={onChange}
         />
       </p>
-      <button
-        style={{ marginTop: "10px" }}
-        onClick={(e) => submitReply(e, value)}
-      >
+      <button style={{ marginTop: "10px" }} onClick={(e) => submitReply(value)}>
         Submit reply
       </button>
       {replyErrorMessage.length > 0 && <p>{replyErrorMessage}</p>}
