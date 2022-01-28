@@ -19,7 +19,7 @@ beforeAll(async function () {
 });
 
 it("send one message and retrieve it", async () => {
-  await contract.addMessage({ text: "aloha", timestamp: 12345678 });
+  await contract.addMessage({ text: "aloha", timestamp: "28/01/2022" });
   const msgs = await contract.getMessages();
   const expectedMessagesResult = [
     {
@@ -27,7 +27,7 @@ it("send one message and retrieve it", async () => {
       reply: "",
       sender: accountId,
       text: "aloha",
-      timestamp: 12345678,
+      timestamp: "28/01/2022",
     },
   ];
   expect(msgs).toEqual(expectedMessagesResult);
@@ -35,8 +35,8 @@ it("send one message and retrieve it", async () => {
 
 it("send two more messages and expect three total", async () => {
   jest.setTimeout.Timeout = 10000;
-  await contract.addMessage({ text: "foo", timestamp: 12345678 });
-  await contract.addMessage({ text: "bar", timestamp: 12345678 });
+  await contract.addMessage({ text: "foo", timestamp: "28/01/2022" });
+  await contract.addMessage({ text: "bar", timestamp: "28/01/2022" });
   const msgs = await contract.getMessages();
   expect(msgs.length).toEqual(3);
 });

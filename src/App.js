@@ -35,7 +35,7 @@ const App = ({ contract, currentUser, nearConfig, wallet }) => {
     // add uuid to each message, so we know which one is already known
     contract
       .addMessage(
-        { text: message.value, timestamp: Date.now() },
+        { text: message.value, timestamp: new Date().toLocaleString() },
         BOATLOAD_OF_GAS,
         Big(donation.value || SUGGESTED_DONATION)
           .times(10 ** 24)

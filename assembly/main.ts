@@ -9,7 +9,7 @@ const MESSAGE_LIMIT = 10;
  * NOTE: This is a change method. Which means it will modify the state.\
  * But right now we don't distinguish them with annotations yet.
  */
-export function addMessage(text: string, timestamp: i32): void {
+export function addMessage(text: string, timestamp: string): void {
   // Creating a new message and populating fields with our data
   const message = new PostedMessage(text, timestamp);
   // Adding the message to end of the persistent collection

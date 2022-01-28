@@ -8,7 +8,7 @@ export class PostedMessage {
   premium: boolean;
   sender: string;
   reply: string;
-  constructor(public text: string, public timestamp: i32) {
+  constructor(public text: string, public timestamp: string) {
     this.premium =
       context.attachedDeposit >= u128.from("10000000000000000000000");
     this.sender = context.sender;

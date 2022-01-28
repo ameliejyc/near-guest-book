@@ -32,7 +32,7 @@ const MessageCard = ({ index, message, contract }) => {
     <div className={`message-container ${message.premium ? "is-premium" : ""}`}>
       <p style={{ marginBottom: "0" }}>From: {message.sender}</p>
       <p style={{ marginTop: "0", marginBottom: "0" }}>
-        Date: {Date(message.timestamp).toString()}
+        Date: {message.timestamp}
       </p>
       {message.premium && (
         <p style={{ marginTop: "0", marginBottom: "0" }}>Added donation!</p>
@@ -96,12 +96,7 @@ const Input = ({ submitReply, replyErrorMessage }) => {
 };
 
 const Reply = ({ text }) => {
-  return (
-    <>
-      <p className="reply-text">Reply from contract owner:</p>
-      <p className="reply-text">{`"${text}"`}</p>
-    </>
-  );
+  return <p className="reply-text">{`Reply from contract owner: "${text}"`}</p>;
 };
 
 export default MessageCard;
